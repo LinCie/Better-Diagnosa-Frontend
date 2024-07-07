@@ -35,7 +35,7 @@ function Header() {
   }
 
   return (
-    <AppBar position="sticky">
+    <AppBar position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <CoronavirusSharp sx={{ mr: 1 }} />
