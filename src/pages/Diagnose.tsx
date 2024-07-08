@@ -16,9 +16,10 @@ import {
   Paper,
   Container,
 } from "@mui/material";
-import { isDengue, Symptom } from "../lib/logic";
+import { isDengue } from "../lib/logic";
 import instance from "../lib/instance";
 import { LoginContext, UsernameContext } from "../rootContext";
+import SymptomQuestion from "../interfaces/question";
 
 interface QuestionProps extends ComponentPropsWithoutRef<"fieldset"> {
   index: number;
@@ -60,7 +61,7 @@ function Question({ children, index, answer, handleAnswer }: QuestionProps) {
 }
 
 function Diagnosa() {
-  const [symptoms, setSymptoms] = useState<Symptom[]>([]);
+  const [symptoms, setSymptoms] = useState<SymptomQuestion[]>([]);
   const [answer, setAnswer] = useState<boolean[]>([]);
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [result, setResult] = useState<boolean>(false);
