@@ -19,6 +19,7 @@ import { Outlet } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { LoginContext, UsernameContext } from "./rootContext";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -26,12 +27,16 @@ function Header() {
   const loginContext = useContext(LoginContext);
   const usernameContext = useContext(UsernameContext);
 
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   function handleMenuClick() {
     setDrawerOpen(!drawerOpen);
   }
 
   function handleLogout() {
     loginContext?.setIsLoggedIn(false);
+    removeCookie("access_token");
+    removeCookie("refresh_token");
   }
 
   return (
@@ -57,7 +62,9 @@ function Header() {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <Box
+            sx={{ display: { xs: "none", md: "flex", alignItems: "center" } }}
+          >
             {loginContext?.isLoggedIn ? (
               <>
                 <Button
@@ -200,35 +207,39 @@ function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
 
+  const [cookies, setCookie, removeCookie] = useCookies();
+
+  async function getAccessToken() {
+    const refreshToken: string = cookies["refresh_token"];
+
+    if (!refreshToken) return;
+
+    try {
+      const refreshResponse = await axios.post(
+        "/api/auth/refresh",
+        {},
+        { headers: { Authorization: `Bearer ${refreshToken}` } }
+      );
+
+      const accessToken: string = refreshResponse.data.access_token;
+      setCookie("access_token", accessToken);
+
+      const usernameResponse = await axios.get("/api/users/username", {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      const returnedUsername: string = usernameResponse.data;
+      setUsername(returnedUsername);
+
+      setIsLoggedIn(true);
+    } catch (error) {
+      removeCookie("refresh_token");
+      throw error;
+    }
+  }
+
   useEffect(() => {
-    async () => {
-      const refreshToken = localStorage.getItem("refresh_token");
-
-      if (!refreshToken) return;
-
-      try {
-        const refreshResponse = await axios.post(
-          "/api/auth/refresh",
-          {},
-          { headers: { Authorization: `Bearer ${refreshToken}` } }
-        );
-
-        const accessToken: string = refreshResponse.data.access_token;
-        localStorage.setItem("access_token", accessToken);
-
-        const usernameResponse = await axios.get("/api/users/username", {
-          headers: { Authorization: `Bearer ${refreshToken}` },
-        });
-
-        const returnedUsername: string = usernameResponse.data.username;
-        setUsername(returnedUsername);
-
-        setIsLoggedIn(true);
-      } catch (error) {
-        localStorage.removeItem("refresh_token");
-        throw error;
-      }
-    };
+    getAccessToken();
   }, []);
 
   return (
