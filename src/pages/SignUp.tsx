@@ -55,7 +55,7 @@ export default function SignUp() {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const returnedUsername: string = usernameResponse.data.username;
+    const returnedUsername: string = usernameResponse.data;
     usernameContext?.setUsername(returnedUsername);
 
     loginContext?.setIsLoggedIn(true);
