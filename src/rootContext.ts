@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import UserData from "./interfaces/userdata";
 
 export interface LoginContextInterface {
   isLoggedIn: boolean;
@@ -17,3 +18,12 @@ export interface UsernameContextInterface {
 export const UsernameContext = createContext<
   UsernameContextInterface | undefined
 >(undefined);
+
+export interface UserContextInterface {
+  user: UserData | undefined;
+  setUser: (user: UserData | undefined) => void;
+}
+
+export const UserContext = createContext<UserContextInterface | undefined>(
+  undefined
+);

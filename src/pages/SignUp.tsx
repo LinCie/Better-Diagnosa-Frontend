@@ -9,8 +9,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import instance from "../lib/instance";
-import { LoginContext, UsernameContext } from "../rootContext";
+import { LoginContext, UserContext } from "../rootContext";
 import { useNavigate } from "react-router-dom";
+import UserData from "../interfaces/userdata";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
@@ -33,7 +34,7 @@ function Copyright(props: any) {
 
 export default function SignUp() {
   const loginContext = React.useContext(LoginContext);
-  const usernameContext = React.useContext(UsernameContext);
+  const userContext = React.useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -51,12 +52,12 @@ export default function SignUp() {
     const refreshToken: string = response.data.refresh_token;
     localStorage.setItem("refresh_token", refreshToken);
 
-    const usernameResponse = await instance.get("users/username", {
+    const userDataResponse = await instance.get("users/userdata", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const returnedUsername: string = usernameResponse.data;
-    usernameContext?.setUsername(returnedUsername);
+    const userData: UserData = userDataResponse.data;
+    userContext?.setUser(userData);
 
     loginContext?.setIsLoggedIn(true);
 

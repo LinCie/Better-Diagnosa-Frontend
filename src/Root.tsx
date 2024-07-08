@@ -17,14 +17,15 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
-import { LoginContext, UsernameContext } from "./rootContext";
+import { LoginContext, UserContext } from "./rootContext";
 import axios from "axios";
+import UserData from "./interfaces/userdata";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const loginContext = useContext(LoginContext);
-  const usernameContext = useContext(UsernameContext);
+  const userContext = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -74,7 +75,7 @@ function Header() {
                   Logout
                 </Button>
                 <Typography variant="body1">
-                  Hello, {usernameContext?.username}
+                  Hello, {userContext?.user?.username}
                 </Typography>
               </>
             ) : (
@@ -204,7 +205,7 @@ function Header() {
 
 function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("");
+  const [user, setUser] = useState<UserData | undefined>(undefined);
 
   async function getAccessToken() {
     const refreshToken = localStorage.getItem("refresh_token");
@@ -221,12 +222,12 @@ function Root() {
       const accessToken: string = refreshResponse.data.access_token;
       localStorage.setItem("access_token", accessToken);
 
-      const usernameResponse = await axios.get("/api/users/username", {
+      const userDataResponse = await axios.get("/api/users/userdata", {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
 
-      const returnedUsername: string = usernameResponse.data;
-      setUsername(returnedUsername);
+      const userData: UserData = userDataResponse.data;
+      setUser(userData);
 
       setIsLoggedIn(true);
     } catch (error) {
@@ -242,10 +243,10 @@ function Root() {
   return (
     <>
       <LoginContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-        <UsernameContext.Provider value={{ username, setUsername }}>
+        <UserContext.Provider value={{ user, setUser }}>
           <Header />
           <Outlet />
-        </UsernameContext.Provider>
+        </UserContext.Provider>
       </LoginContext.Provider>
     </>
   );
