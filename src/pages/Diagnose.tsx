@@ -4,7 +4,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useCookies } from "react-cookie";
 import { Navigate } from "react-router-dom";
 import {
   Button,
@@ -19,7 +18,7 @@ import {
 } from "@mui/material";
 import { isDengue, Symptom } from "../lib/logic";
 import instance from "../lib/instance";
-import { LoginContext } from "../rootContext";
+import { LoginContext, UsernameContext } from "../rootContext";
 
 interface QuestionProps extends ComponentPropsWithoutRef<"fieldset"> {
   index: number;
@@ -61,14 +60,14 @@ function Question({ children, index, answer, handleAnswer }: QuestionProps) {
 }
 
 function Diagnosa() {
-  const [cookies] = useCookies();
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
   const [answer, setAnswer] = useState<boolean[]>([]);
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [result, setResult] = useState<boolean>(false);
 
   const loginContext = useContext(LoginContext);
-  const accessToken = cookies["access_token"];
+  const accessToken = localStorage.getItem("access_token");
+  const usernameContext = useContext(UsernameContext);
 
   useEffect(() => {
     instance
@@ -119,7 +118,7 @@ function Diagnosa() {
         }}
       >
         <Typography variant="h3" component="h1">
-          Halo, {cookies.username}
+          Halo, {usernameContext?.username}
         </Typography>
         <Typography>
           Mulai diagnosa dengan menjawab pertanyaan pertanyaan di bawah ini

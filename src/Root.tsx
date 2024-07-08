@@ -15,11 +15,10 @@ import {
   Divider,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { LoginContext, UsernameContext } from "./rootContext";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -27,16 +26,16 @@ function Header() {
   const loginContext = useContext(LoginContext);
   const usernameContext = useContext(UsernameContext);
 
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
 
   function handleMenuClick() {
     setDrawerOpen(!drawerOpen);
   }
 
-  function handleLogout() {
-    loginContext?.setIsLoggedIn(false);
-    removeCookie("access_token");
-    removeCookie("refresh_token");
+  async function handleLogout() {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    navigate(0);
   }
 
   return (
@@ -207,10 +206,8 @@ function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
 
-  const [cookies, setCookie, removeCookie] = useCookies();
-
   async function getAccessToken() {
-    const refreshToken: string = cookies["refresh_token"];
+    const refreshToken = localStorage.getItem("refresh_token");
 
     if (!refreshToken) return;
 
@@ -222,7 +219,7 @@ function Root() {
       );
 
       const accessToken: string = refreshResponse.data.access_token;
-      setCookie("access_token", accessToken);
+      localStorage.setItem("access_token", accessToken);
 
       const usernameResponse = await axios.get("/api/users/username", {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -233,7 +230,7 @@ function Root() {
 
       setIsLoggedIn(true);
     } catch (error) {
-      removeCookie("refresh_token");
+      localStorage.removeItem("refresh_token");
       throw error;
     }
   }

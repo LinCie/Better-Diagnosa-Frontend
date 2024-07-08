@@ -11,7 +11,6 @@ import Container from "@mui/material/Container";
 import instance from "../lib/instance";
 import { LoginContext, UsernameContext } from "../rootContext";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
@@ -38,8 +37,6 @@ export default function SignUp() {
 
   const navigate = useNavigate();
 
-  const [cookies, setCookie, removeCookie] = useCookies();
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -49,10 +46,10 @@ export default function SignUp() {
     });
 
     const accessToken: string = response.data.access_token;
-    setCookie("access_token", accessToken);
+    localStorage.setItem("access_token", accessToken);
 
     const refreshToken: string = response.data.refresh_token;
-    setCookie("refresh_token", refreshToken);
+    localStorage.setItem("refresh_token", refreshToken);
 
     const usernameResponse = await instance.get("users/username", {
       headers: { Authorization: `Bearer ${accessToken}` },
