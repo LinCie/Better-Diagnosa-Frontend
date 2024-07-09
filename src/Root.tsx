@@ -26,6 +26,7 @@ function Header() {
 
   const loginContext = useContext(LoginContext);
   const userContext = useContext(UserContext);
+  const isAdmin = userContext?.user?.roles.includes("ADMIN");
 
   const navigate = useNavigate();
 
@@ -67,6 +68,24 @@ function Header() {
           >
             {loginContext?.isLoggedIn ? (
               <>
+                {isAdmin && (
+                  <Button
+                    component={RouterLink}
+                    to="/admin"
+                    color="inherit"
+                    sx={{ fontWeight: 700, mr: 2 }}
+                  >
+                    Admin
+                  </Button>
+                )}
+                <Button
+                  component={RouterLink}
+                  to="/diagnose"
+                  color="inherit"
+                  sx={{ fontWeight: 700, mr: 2 }}
+                >
+                  Diagnose
+                </Button>
                 <Button
                   onClick={() => loginContext.setIsLoggedIn(false)}
                   color="inherit"

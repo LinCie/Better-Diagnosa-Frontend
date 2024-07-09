@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import { isDengue } from "../lib/logic";
 import instance from "../lib/instance";
-import { LoginContext, UsernameContext } from "../rootContext";
+import { LoginContext, UserContext } from "../rootContext";
 import SymptomQuestion from "../interfaces/question";
 
 interface QuestionProps extends ComponentPropsWithoutRef<"fieldset"> {
@@ -67,8 +67,8 @@ function Diagnosa() {
   const [result, setResult] = useState<boolean>(false);
 
   const loginContext = useContext(LoginContext);
+  const userContext = useContext(UserContext);
   const accessToken = localStorage.getItem("access_token");
-  const usernameContext = useContext(UsernameContext);
 
   useEffect(() => {
     instance
@@ -119,7 +119,7 @@ function Diagnosa() {
         }}
       >
         <Typography variant="h3" component="h1">
-          Halo, {usernameContext?.username}
+          Halo, {userContext?.user?.username}
         </Typography>
         <Typography>
           Mulai diagnosa dengan menjawab pertanyaan pertanyaan di bawah ini
