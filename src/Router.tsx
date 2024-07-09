@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
 import Diagnose from "./pages/Diagnose";
+import Admin from "./pages/Admin";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/diagnose" element={<Diagnose />} />
+        <Route path="/admin" element={<Admin />} />
       </Route>
     </>
   )
