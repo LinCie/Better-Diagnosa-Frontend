@@ -87,7 +87,7 @@ function Header() {
                   Diagnose
                 </Button>
                 <Button
-                  onClick={() => loginContext.setIsLoggedIn(false)}
+                  onClick={handleLogout}
                   color="inherit"
                   sx={{ fontWeight: 700, mr: 2 }}
                 >
@@ -169,7 +169,6 @@ function Header() {
                     edge="start"
                     color="inherit"
                     aria-label="menu-close"
-                    onClick={handleLogout}
                   >
                     <Close />
                   </IconButton>
@@ -224,12 +223,16 @@ function Header() {
 
 function Root() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserData | undefined>(undefined);
 
   async function getAccessToken() {
     const refreshToken = localStorage.getItem("refresh_token");
 
-    if (!refreshToken) return;
+    if (!refreshToken) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const refreshResponse = await axios.post(
@@ -247,17 +250,22 @@ function Root() {
 
       const userData: UserData = userDataResponse.data;
       setUser(userData);
-
       setIsLoggedIn(true);
     } catch (error) {
       localStorage.removeItem("refresh_token");
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
     getAccessToken();
   }, []);
+
+  if (isLoading) {
+    return <></>;
+  }
 
   return (
     <>
