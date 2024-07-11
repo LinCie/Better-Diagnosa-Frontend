@@ -72,7 +72,7 @@ function Diagnosa() {
 
   useEffect(() => {
     instance
-      .get("/questions", {
+      .get("/question", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
