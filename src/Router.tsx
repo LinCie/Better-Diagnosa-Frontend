@@ -8,7 +8,7 @@ import Index from "./pages/Index";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
 import Diagnose from "./pages/Diagnose";
-import Admin from "./pages/Admin";
+import Question from "./pages/Question";
 import RootAdmin from "./RootAdmin";
 
 const router = createBrowserRouter(
@@ -21,7 +21,7 @@ const router = createBrowserRouter(
         <Route path="/diagnose" element={<Diagnose />} />
       </Route>
       <Route path="/admin" element={<RootAdmin />}>
-        <Route element={<Admin />} index />
+        <Route element={<Question />} index />
       </Route>
     </>
   )

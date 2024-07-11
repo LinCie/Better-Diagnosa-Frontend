@@ -70,7 +70,7 @@ function AddQuestion() {
   );
 }
 
-function Admin() {
+function Question() {
   return (
     <Box sx={{ px: 3, mt: 10 }}>
       <AddQuestion />
@@ -78,4 +78,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default Question;
