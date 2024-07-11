@@ -179,6 +179,15 @@ function Header() {
                 <List>
                   {loginContext?.isLoggedIn ? (
                     <>
+                      <ListItem component={RouterLink} to="/admin">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{ color: "black", fontWeight: 700 }}
+                          primary="Admin"
+                        />
+                      </ListItem>
                       <ListItem onClick={handleLogout}>
                         <ListItemIcon>
                           <Person />

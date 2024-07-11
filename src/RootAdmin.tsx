@@ -71,21 +71,13 @@ function Header() {
                 {isAdmin && (
                   <Button
                     component={RouterLink}
-                    to="/admin"
+                    to="/"
                     color="inherit"
                     sx={{ fontWeight: 700, mr: 2 }}
                   >
-                    Admin
+                    Main
                   </Button>
                 )}
-                <Button
-                  component={RouterLink}
-                  to="/diagnose"
-                  color="inherit"
-                  sx={{ fontWeight: 700, mr: 2 }}
-                >
-                  Diagnose
-                </Button>
                 <Button
                   onClick={handleLogout}
                   color="inherit"
@@ -179,6 +171,15 @@ function Header() {
                 <List>
                   {loginContext?.isLoggedIn ? (
                     <>
+                      <ListItem component={RouterLink} to="/">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{ color: "black", fontWeight: 700 }}
+                          primary="Main"
+                        />
+                      </ListItem>
                       <ListItem onClick={handleLogout}>
                         <ListItemIcon>
                           <Person />
@@ -226,12 +227,13 @@ function RootAdmin() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserData | undefined>(undefined);
 
+  const navigate = useNavigate();
+
   async function getAccessToken() {
     const refreshToken = localStorage.getItem("refresh_token");
 
     if (!refreshToken) {
-      setIsLoading(false);
-      return;
+      navigate("/");
     }
 
     try {
@@ -249,6 +251,11 @@ function RootAdmin() {
       });
 
       const userData: UserData = userDataResponse.data;
+
+      if (!userData.roles.includes("ADMIN")) {
+        navigate("/");
+      }
+
       setUser(userData);
       setIsLoggedIn(true);
     } catch (error) {
