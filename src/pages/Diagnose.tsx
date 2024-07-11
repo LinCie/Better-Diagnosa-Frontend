@@ -32,7 +32,7 @@ function Question({ children, index, answer, handleAnswer }: QuestionProps) {
     <Paper
       elevation={3}
       sx={{
-        width: "50vw",
+        width: { xs: "85vw", md: "65vw" },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -111,17 +111,18 @@ function Diagnosa() {
     <>
       <Container
         sx={{
-          height: "50vh",
+          mt: 15,
+          mb: 4,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-        <Typography variant="h3" component="h1">
+        <Typography variant="h3" component="h1" textAlign="center">
           Halo, {userContext?.user?.username}
         </Typography>
-        <Typography>
+        <Typography textAlign="center">
           Mulai diagnosa dengan menjawab pertanyaan pertanyaan di bawah ini
         </Typography>
       </Container>
