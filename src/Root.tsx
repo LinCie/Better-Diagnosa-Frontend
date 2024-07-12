@@ -37,7 +37,8 @@ function Header() {
   async function handleLogout() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
-    navigate(0);
+    loginContext?.setIsLoggedIn(false);
+    navigate("/login");
   }
 
   return (
@@ -296,7 +297,7 @@ function Root() {
 
   useEffect(() => {
     getAccessToken();
-  }, []);
+  }, [isLoggedIn]);
 
   if (isLoading) {
     return <></>;
