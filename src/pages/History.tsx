@@ -55,7 +55,7 @@ function History() {
                 <TableCell
                   sx={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
                 >
-                  ID
+                  Nomor
                 </TableCell>
                 <TableCell
                   sx={{ fontWeight: "bold", backgroundColor: "#f5f5f5" }}
@@ -75,9 +75,9 @@ function History() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {histories.map((history) => (
-                <TableRow key={history.id}>
-                  <TableCell>{history.id}</TableCell>
+              {histories.map((history, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell>{user?.user?.username}</TableCell>
                   <TableCell>
                     {history.isDengue ? "Terdiagnosa" : "Tidak Terdiagnosa"}
