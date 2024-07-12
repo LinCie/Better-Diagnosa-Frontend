@@ -87,6 +87,14 @@ function Header() {
                   Diagnosa
                 </Button>
                 <Button
+                  component={RouterLink}
+                  to="/history"
+                  color="inherit"
+                  sx={{ fontWeight: 700, mr: 2 }}
+                >
+                  Sejarah
+                </Button>
+                <Button
                   onClick={handleLogout}
                   color="inherit"
                   sx={{ fontWeight: 700, mr: 2 }}
@@ -195,6 +203,15 @@ function Header() {
                         <ListItemText
                           sx={{ color: "black", fontWeight: 700 }}
                           primary="Diagnosa"
+                        />
+                      </ListItem>
+                      <ListItem component={RouterLink} to="/history">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{ color: "black", fontWeight: 700 }}
+                          primary="Sejarah"
                         />
                       </ListItem>
                       <ListItem onClick={handleLogout}>
