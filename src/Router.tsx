@@ -10,6 +10,7 @@ import LogIn from "./pages/LogIn";
 import Diagnose from "./pages/Diagnose";
 import Question from "./pages/Question";
 import RootAdmin from "./RootAdmin";
+import History from "./pages/History";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,6 +20,7 @@ const router = createBrowserRouter(
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/diagnose" element={<Diagnose />} />
+        <Route path="/history" element={<History />} />
       </Route>
       <Route path="/admin" element={<RootAdmin />}>
         <Route element={<Question />} index />
