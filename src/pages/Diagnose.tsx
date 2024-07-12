@@ -4,7 +4,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -63,12 +63,11 @@ function Question({ children, index, answer, handleAnswer }: QuestionProps) {
 function Diagnosa() {
   const [symptoms, setSymptoms] = useState<SymptomQuestion[]>([]);
   const [answer, setAnswer] = useState<boolean[]>([]);
-  const [isAnswered, setIsAnswered] = useState<boolean>(false);
-  const [result, setResult] = useState<boolean>(false);
 
   const loginContext = useContext(LoginContext);
   const userContext = useContext(UserContext);
   const accessToken = localStorage.getItem("access_token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     instance
@@ -91,9 +90,7 @@ function Diagnosa() {
   }
 
   async function handleDiagnose() {
-    setIsAnswered(true);
     const result = isDengue(answer, symptoms);
-    setResult(result);
     await instance.post(
       "history",
       { isDengue: result },
@@ -101,6 +98,7 @@ function Diagnosa() {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
+    navigate("/result", { state: { result } });
   }
 
   if (!loginContext?.isLoggedIn) {
@@ -151,13 +149,6 @@ function Diagnosa() {
           Diagnosa
         </Button>
       </Container>
-      {isAnswered && (
-        <Container sx={{ textAlign: "center" }}>
-          <Typography variant="h4" component="h2">
-            {result ? "Anda terdiagnosa DBD" : "Anda tidak terdiagnosa DBD"}
-          </Typography>
-        </Container>
-      )}
     </>
   );
 }
