@@ -71,7 +71,7 @@ function Diagnosa() {
 
   useEffect(() => {
     instance
-      .get("/question", {
+      .get("/questions", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
@@ -92,7 +92,7 @@ function Diagnosa() {
   async function handleDiagnose() {
     const result = isDengue(answer, symptoms);
     await instance.post(
-      "history",
+      "histories",
       { isDengue: result },
       {
         headers: { Authorization: `Bearer ${accessToken}` },

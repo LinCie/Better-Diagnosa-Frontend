@@ -20,9 +20,12 @@ import { Link as RouterLink } from "react-router-dom";
 import { LoginContext, UserContext } from "./rootContext";
 import axios from "axios";
 import UserData from "./interfaces/userdata";
+import { useCookies } from "react-cookie";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const loginContext = useContext(LoginContext);
   const userContext = useContext(UserContext);
@@ -38,6 +41,7 @@ function Header() {
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
     loginContext?.setIsLoggedIn(false);
+    removeCookie("user");
     navigate("/login");
   }
 
@@ -262,6 +266,8 @@ function Root() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [user, setUser] = useState<UserData | undefined>(undefined);
 
+  const [cookies] = useCookies();
+
   async function getAccessToken() {
     const refreshToken = localStorage.getItem("refresh_token");
 
@@ -271,21 +277,18 @@ function Root() {
     }
 
     try {
-      const refreshResponse = await axios.post(
-        "/api/auth/refresh",
+      const response = await axios.post(
+        "/api/v1/auth/refresh",
         {},
         { headers: { Authorization: `Bearer ${refreshToken}` } }
       );
 
-      const accessToken: string = refreshResponse.data.access_token;
+      const accessToken: string = response.data.access_token;
       localStorage.setItem("access_token", accessToken);
 
-      const userDataResponse = await axios.get("/api/users/userdata", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const user = cookies.user
 
-      const userData: UserData = userDataResponse.data;
-      setUser(userData);
+      setUser(user);
       setIsLoggedIn(true);
     } catch (error) {
       localStorage.removeItem("refresh_token");
@@ -297,7 +300,7 @@ function Root() {
 
   useEffect(() => {
     getAccessToken();
-  }, [isLoggedIn]);
+  }, []);
 
   if (isLoading) {
     return <></>;

@@ -38,9 +38,13 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
 
     const accessToken = localStorage.getItem("access_token");
 
-    const response = await instance.post("question", formData, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    const response = await instance.post(
+      "questions",
+      { question: formData.question, belief: +formData.belief },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
 
     pushQuestion(response.data);
     setFormData({ question: "", belief: 0 });
@@ -90,7 +94,7 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
 interface ShowQuestionInterface {
   questionList: QuestionInterface[];
   onEdit: (question: QuestionInterface) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 function ShowQuestion({
@@ -120,7 +124,7 @@ function ShowQuestion({
 interface QuestionItemProps {
   question: QuestionInterface;
   onEdit: (question: QuestionInterface) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({
@@ -220,7 +224,7 @@ function Question() {
 
   useEffect(() => {
     instance
-      .get("/question", {
+      .get("/questions", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((response) => {
@@ -233,9 +237,13 @@ function Question() {
 
   const handleEdit = async (question: QuestionInterface) => {
     try {
-      const response = await instance.put(`question/${question.id}`, question, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      const response = await instance.patch(
+        `questions/${question.id}`,
+        { question: question.question, belief: +question.belief },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
       if (response.status === 200) {
         setQuestionList(
           questionList.map((q) => (q.id === question.id ? question : q))
@@ -246,9 +254,9 @@ function Question() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
-      const response = await instance.delete(`question/${id}`, {
+      const response = await instance.delete(`questions/${id}`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       if (response.status === 200) {

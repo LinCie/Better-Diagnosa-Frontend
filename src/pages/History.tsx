@@ -33,7 +33,7 @@ function History() {
 
   useEffect(() => {
     instance
-      .get("history", { headers: { Authorization: `Bearer ${accessToken}` } })
+      .get("histories", { headers: { Authorization: `Bearer ${accessToken}` } })
       .then((response) => {
         setHistories(response.data);
       })

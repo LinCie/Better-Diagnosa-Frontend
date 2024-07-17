@@ -11,7 +11,6 @@ import Container from "@mui/material/Container";
 import instance from "../lib/instance";
 import { LoginContext, UserContext } from "../rootContext";
 import { useNavigate } from "react-router-dom";
-import UserData from "../interfaces/userdata";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
@@ -46,18 +45,13 @@ export default function SignUp() {
       password: data.get("password"),
     });
 
+    userContext?.setUser(response.data.user);
+
     const accessToken: string = response.data.access_token;
     localStorage.setItem("access_token", accessToken);
 
     const refreshToken: string = response.data.refresh_token;
     localStorage.setItem("refresh_token", refreshToken);
-
-    const userDataResponse = await instance.get("users/userdata", {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-
-    const userData: UserData = userDataResponse.data;
-    userContext?.setUser(userData);
 
     loginContext?.setIsLoggedIn(true);
 
