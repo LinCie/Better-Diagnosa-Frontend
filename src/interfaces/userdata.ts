@@ -4,7 +4,7 @@ interface UserData {
   id: number;
   username: string;
   roles: string[];
-  history: number[] | History[];
+  histories: History[];
 }
 
 export default UserData;

@@ -12,6 +12,7 @@ import Question from "./pages/Question";
 import RootAdmin from "./RootAdmin";
 import History from "./pages/History";
 import DiagnoseResult from "./pages/DiagnoseResult";
+import AllUsers from "./pages/AllUsers";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
       </Route>
       <Route path="/admin" element={<RootAdmin />}>
         <Route element={<Question />} index />
+        <Route path="/admin/users" element={<AllUsers />} />
       </Route>
     </>
   )

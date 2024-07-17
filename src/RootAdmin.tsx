@@ -69,14 +69,32 @@ function Header() {
             {loginContext?.isLoggedIn ? (
               <>
                 {isAdmin && (
-                  <Button
-                    component={RouterLink}
-                    to="/"
-                    color="inherit"
-                    sx={{ fontWeight: 700, mr: 2 }}
-                  >
-                    Main
-                  </Button>
+                  <>
+                    <Button
+                      component={RouterLink}
+                      to="/"
+                      color="inherit"
+                      sx={{ fontWeight: 700, mr: 2 }}
+                    >
+                      Main
+                    </Button>
+                    <Button
+                      component={RouterLink}
+                      to="/admin"
+                      color="inherit"
+                      sx={{ fontWeight: 700, mr: 2 }}
+                    >
+                      Pertanyaan
+                    </Button>
+                    <Button
+                      component={RouterLink}
+                      to="/admin/users"
+                      color="inherit"
+                      sx={{ fontWeight: 700, mr: 2 }}
+                    >
+                      Pengguna
+                    </Button>
+                  </>
                 )}
                 <Button
                   onClick={handleLogout}
@@ -178,6 +196,24 @@ function Header() {
                         <ListItemText
                           sx={{ color: "black", fontWeight: 700 }}
                           primary="Main"
+                        />
+                      </ListItem>
+                      <ListItem component={RouterLink} to="/admin">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{ color: "black", fontWeight: 700 }}
+                          primary="Pertanyaan"
+                        />
+                      </ListItem>
+                      <ListItem component={RouterLink} to="/admin/users">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{ color: "black", fontWeight: 700 }}
+                          primary="Pengguna"
                         />
                       </ListItem>
                       <ListItem onClick={handleLogout}>
