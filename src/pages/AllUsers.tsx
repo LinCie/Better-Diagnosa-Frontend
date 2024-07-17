@@ -8,6 +8,9 @@ import {
   TableRow,
   Box,
   Typography,
+  Button,
+  TextField,
+  Modal,
 } from "@mui/material";
 import UserData from "../interfaces/userdata";
 import instance from "../lib/instance";
@@ -15,10 +18,16 @@ import instance from "../lib/instance";
 const AllUsers = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [dengueStats, setDengueStats] = useState({ positive: 0, negative: 0 });
+  const [editUser, setEditUser] = useState<UserData | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const accessToken = localStorage.getItem("access_token");
 
   useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = () => {
     instance
       .get("users", { headers: { Authorization: `Bearer ${accessToken}` } })
       .then((response) => {
@@ -44,7 +53,45 @@ const AllUsers = () => {
       .catch((error) => {
         console.error("There was an error fetching the users!", error);
       });
-  }, []);
+  };
+
+  const handleEditUser = (user: UserData) => {
+    setEditUser(user);
+    setModalOpen(true);
+  };
+
+  const handleDeleteUser = (userId: string) => {
+    instance
+      .delete(`users/${userId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
+      .then(() => {
+        fetchUsers();
+      })
+      .catch((error) => {
+        console.error("There was an error deleting the user!", error);
+      });
+  };
+
+  const handleSaveUser = () => {
+    if (editUser) {
+      instance
+        .patch(`users/${editUser.id}`, editUser, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+        .then(() => {
+          fetchUsers();
+          setModalOpen(false);
+        })
+        .catch((error) => {
+          console.error("There was an error updating the user!", error);
+        });
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditUser({ ...editUser!, [e.target.name]: e.target.value });
+  };
 
   const totalDiagnoses = dengueStats.positive + dengueStats.negative;
   const positivePercentage = totalDiagnoses
@@ -88,6 +135,7 @@ const AllUsers = () => {
             <TableRow>
               <TableCell>No.</TableCell>
               <TableCell>Username</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -95,13 +143,68 @@ const AllUsers = () => {
               <TableRow key={index}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{user.username}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleEditUser(user)}
+                    sx={{ mr: 3 }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteUser(user.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box sx={{ ...modalStyle }}>
+          {editUser && (
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Edit User
+              </Typography>
+              <TextField
+                label="Username"
+                name="username"
+                value={editUser.username}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+              />
+              <Button
+                variant="contained"
+                onClick={handleSaveUser}
+                sx={{ mt: 2 }}
+              >
+                Save
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
+};
+
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
 };
 
 export default AllUsers;
