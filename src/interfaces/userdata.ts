@@ -1,7 +1,7 @@
 import History from "./history";
 
 interface UserData {
-  id: number;
+  id: string;
   username: string;
   roles: string[];
   histories: History[];

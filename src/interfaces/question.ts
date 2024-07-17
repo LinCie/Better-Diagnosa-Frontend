@@ -1,5 +1,5 @@
 interface Question {
-  id: number;
+  id: string;
   question: string;
   belief: number;
 }
