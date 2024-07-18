@@ -87,7 +87,13 @@ function Header() {
                       component={RouterLink}
                       to="/admin"
                       color="inherit"
-                      sx={{ fontWeight: 700, mr: 2 }}
+                      sx={{
+                        fontWeight: 700,
+                        mr: 2,
+                        borderStyle:
+                          location.pathname === "/admin" ? "solid" : "none",
+                        borderWidth: 1,
+                      }}
                     >
                       Pertanyaan
                     </Button>
@@ -95,7 +101,15 @@ function Header() {
                       component={RouterLink}
                       to="/admin/users"
                       color="inherit"
-                      sx={{ fontWeight: 700, mr: 2 }}
+                      sx={{
+                        fontWeight: 700,
+                        mr: 2,
+                        borderStyle:
+                          location.pathname === "/admin/users"
+                            ? "solid"
+                            : "none",
+                        borderWidth: 1,
+                      }}
                     >
                       Pengguna
                     </Button>
@@ -208,7 +222,13 @@ function Header() {
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/admin" ? "solid" : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Pertanyaan"
                         />
                       </ListItem>
@@ -217,7 +237,15 @@ function Header() {
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/admin/users"
+                                ? "solid"
+                                : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Pengguna"
                         />
                       </ListItem>

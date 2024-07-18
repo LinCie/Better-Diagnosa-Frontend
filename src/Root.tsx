@@ -15,7 +15,7 @@ import {
   Divider,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { LoginContext, UserContext } from "./rootContext";
 import axios from "axios";
@@ -32,6 +32,7 @@ function Header() {
   const isAdmin = userContext?.user?.roles.includes("ADMIN");
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   function handleMenuClick() {
     setDrawerOpen(!drawerOpen);
@@ -78,7 +79,13 @@ function Header() {
                     component={RouterLink}
                     to="/admin"
                     color="inherit"
-                    sx={{ fontWeight: 700, mr: 2 }}
+                    sx={{
+                      fontWeight: 700,
+                      mr: 2,
+                      borderStyle:
+                        location.pathname === "/admin" ? "solid" : "none",
+                      borderWidth: 1,
+                    }}
                   >
                     Admin
                   </Button>
@@ -87,7 +94,13 @@ function Header() {
                   component={RouterLink}
                   to="/diagnose"
                   color="inherit"
-                  sx={{ fontWeight: 700, mr: 2 }}
+                  sx={{
+                    fontWeight: 700,
+                    mr: 2,
+                    borderStyle:
+                      location.pathname === "/diagnose" ? "solid" : "none",
+                    borderWidth: 1,
+                  }}
                 >
                   Diagnosa
                 </Button>
@@ -95,7 +108,13 @@ function Header() {
                   component={RouterLink}
                   to="/history"
                   color="inherit"
-                  sx={{ fontWeight: 700, mr: 2 }}
+                  sx={{
+                    fontWeight: 700,
+                    mr: 2,
+                    borderStyle:
+                      location.pathname === "/history" ? "solid" : "none",
+                    borderWidth: 1,
+                  }}
                 >
                   Sejarah
                 </Button>
@@ -116,7 +135,12 @@ function Header() {
                   component={RouterLink}
                   to="/login"
                   color="inherit"
-                  sx={{ fontWeight: 700 }}
+                  sx={{
+                    fontWeight: 700,
+                    borderStyle:
+                      location.pathname === "/login" ? "solid" : "none",
+                    borderWidth: 1,
+                  }}
                 >
                   Login
                 </Button>
@@ -124,7 +148,12 @@ function Header() {
                   component={RouterLink}
                   to="/signup"
                   color="inherit"
-                  sx={{ fontWeight: 700 }}
+                  sx={{
+                    fontWeight: 700,
+                    borderStyle:
+                      location.pathname === "/signup" ? "solid" : "none",
+                    borderWidth: 1,
+                  }}
                 >
                   Signup
                 </Button>
@@ -192,21 +221,31 @@ function Header() {
                 <List>
                   {loginContext?.isLoggedIn ? (
                     <>
-                      <ListItem component={RouterLink} to="/admin">
-                        <ListItemIcon>
-                          <Person />
-                        </ListItemIcon>
-                        <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
-                          primary="Admin"
-                        />
-                      </ListItem>
+                      {isAdmin && (
+                        <ListItem component={RouterLink} to="/admin">
+                          <ListItemIcon>
+                            <Person />
+                          </ListItemIcon>
+                          <ListItemText
+                            sx={{ color: "black", fontWeight: 700 }}
+                            primary="Admin"
+                          />
+                        </ListItem>
+                      )}
                       <ListItem component={RouterLink} to="/diagnose">
                         <ListItemIcon>
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/diagnose"
+                                ? "solid"
+                                : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Diagnosa"
                         />
                       </ListItem>
@@ -215,7 +254,15 @@ function Header() {
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/history"
+                                ? "solid"
+                                : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Sejarah"
                         />
                       </ListItem>
@@ -236,7 +283,13 @@ function Header() {
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/login" ? "solid" : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Login"
                         />
                       </ListItem>
@@ -245,7 +298,15 @@ function Header() {
                           <Person />
                         </ListItemIcon>
                         <ListItemText
-                          sx={{ color: "black", fontWeight: 700 }}
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/signup"
+                                ? "solid"
+                                : "none",
+                            borderWidth: 1,
+                          }}
                           primary="Signup"
                         />
                       </ListItem>
@@ -286,7 +347,7 @@ function Root() {
       const accessToken: string = response.data.access_token;
       localStorage.setItem("access_token", accessToken);
 
-      const user = cookies.user
+      const user = cookies.user;
 
       setUser(user);
       setIsLoggedIn(true);
