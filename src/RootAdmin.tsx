@@ -30,6 +30,8 @@ function Header() {
   const isAdmin = userContext?.user?.roles.includes("ADMIN");
 
   const [cookies, setCookie, removeCookie] = useCookies();
+  cookies;
+  setCookie;
 
   const navigate = useNavigate();
 
@@ -335,6 +337,7 @@ function RootAdmin() {
 
   useEffect(() => {
     getAccessToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {

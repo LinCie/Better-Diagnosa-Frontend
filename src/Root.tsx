@@ -26,6 +26,8 @@ function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 
   const [cookies, setCookie, removeCookie] = useCookies();
+  cookies;
+  setCookie;
 
   const loginContext = useContext(LoginContext);
   const userContext = useContext(UserContext);
@@ -390,6 +392,7 @@ function Root() {
 
   useEffect(() => {
     getAccessToken();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (isLoading) {
