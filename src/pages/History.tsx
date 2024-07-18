@@ -24,11 +24,9 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
-function History() {
+function HistoryComponent() {
   const [histories, setHistories] = useState<HistoryInterface[]>([]);
-
   const accessToken = localStorage.getItem("access_token");
-
   const user = useContext(UserContext);
 
   useEffect(() => {
@@ -40,7 +38,20 @@ function History() {
       .catch((error) => {
         console.error("There was an error fetching the histories!", error);
       });
-  }, []);
+  }, [accessToken]);
+
+  // Calculate the counts
+  const totalHistories = histories.length;
+  const trueDengueCount = histories.filter(
+    (history) => history.isDengue
+  ).length;
+  const falseDengueCount = totalHistories - trueDengueCount;
+  const positivePercentage = totalHistories
+    ? ((trueDengueCount / totalHistories) * 100).toFixed(2)
+    : 0;
+  const negativePercentage = totalHistories
+    ? ((falseDengueCount / totalHistories) * 100).toFixed(2)
+    : 0;
 
   return (
     <StyledContainer sx={{ mt: 10 }}>
@@ -48,6 +59,21 @@ function History() {
         Sejarah Diagnosa
       </Typography>
       <StyledPaper>
+        <Typography variant="subtitle1" gutterBottom>
+          Total Sejarah Diagnosa: {totalHistories}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Positif Demam Berdarah: {trueDengueCount}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Persentase positif demam berdarah: {positivePercentage}%
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Negatif Demam Berdarah: {falseDengueCount}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Persentase negatif demam berdarah: {negativePercentage}%
+        </Typography>
         <TableContainer>
           <Table>
             <TableHead>
@@ -76,7 +102,7 @@ function History() {
             </TableHead>
             <TableBody>
               {histories.map((history, index) => (
-                <TableRow key={index}>
+                <TableRow key={history.id}>
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>{user?.user?.username}</TableCell>
                   <TableCell>
@@ -95,4 +121,4 @@ function History() {
   );
 }
 
-export default History;
+export default HistoryComponent;
