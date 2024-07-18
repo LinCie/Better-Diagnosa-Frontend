@@ -13,6 +13,7 @@ import RootAdmin from "./RootAdmin";
 import History from "./pages/History";
 import DiagnoseResult from "./pages/DiagnoseResult";
 import AllUsers from "./pages/AllUsers";
+import DengueInfo from "./pages/DengueInfo";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +25,7 @@ const router = createBrowserRouter(
         <Route path="/diagnose" element={<Diagnose />} />
         <Route path="/result" element={<DiagnoseResult />} />
         <Route path="/history" element={<History />} />
+        <Route path="/info" element={<DengueInfo />} />
       </Route>
       <Route path="/admin" element={<RootAdmin />}>
         <Route element={<Question />} index />

@@ -10,6 +10,16 @@ function DiagnoseResult() {
       <Typography variant="h4" component="h2">
         {result ? "Anda terdiagnosa DBD" : "Anda tidak terdiagnosa DBD"}
       </Typography>
+      {result && (
+        <Button
+          component={Link}
+          to="/info"
+          variant="contained"
+          sx={{ mt: 4, mr: 2 }}
+        >
+          Penanganan DBD
+        </Button>
+      )}
       <Button
         component={Link}
         to="/diagnose"

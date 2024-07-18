@@ -119,6 +119,20 @@ function Header() {
                   Sejarah
                 </Button>
                 <Button
+                  component={RouterLink}
+                  to="/info"
+                  color="inherit"
+                  sx={{
+                    fontWeight: 700,
+                    mr: 2,
+                    borderStyle:
+                      location.pathname === "/info" ? "solid" : "none",
+                    borderWidth: 1,
+                  }}
+                >
+                  Penanganan
+                </Button>
+                <Button
                   onClick={handleLogout}
                   color="inherit"
                   sx={{ fontWeight: 700, mr: 2 }}
@@ -264,6 +278,21 @@ function Header() {
                             borderWidth: 1,
                           }}
                           primary="Sejarah"
+                        />
+                      </ListItem>
+                      <ListItem component={RouterLink} to="/info">
+                        <ListItemIcon>
+                          <Person />
+                        </ListItemIcon>
+                        <ListItemText
+                          sx={{
+                            color: "black",
+                            fontWeight: 700,
+                            borderStyle:
+                              location.pathname === "/info" ? "solid" : "none",
+                            borderWidth: 1,
+                          }}
+                          primary="Penanganan"
                         />
                       </ListItem>
                       <ListItem onClick={handleLogout}>
