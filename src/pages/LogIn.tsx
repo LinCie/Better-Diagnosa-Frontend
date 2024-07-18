@@ -11,6 +11,7 @@ import Container from "@mui/material/Container";
 import instance from "../lib/instance";
 import { LoginContext, UserContext } from "../rootContext";
 import { useNavigate } from "react-router-dom";
+import Alert from "@mui/material/Alert";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
@@ -36,26 +37,33 @@ export default function LogIn() {
   const userContext = React.useContext(UserContext);
 
   const navigate = useNavigate();
+  const [error, setError] = React.useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const response = await instance.post("auth/login", {
-      username: data.get("username"),
-      password: data.get("password"),
-    });
 
-    userContext?.setUser(response.data.user);
+    try {
+      const response = await instance.post("auth/login", {
+        username: data.get("username"),
+        password: data.get("password"),
+      });
 
-    const accessToken: string = response.data.access_token;
-    localStorage.setItem("access_token", accessToken);
+      userContext?.setUser(response.data.user);
 
-    const refreshToken: string = response.data.refresh_token;
-    localStorage.setItem("refresh_token", refreshToken);
+      const accessToken: string = response.data.access_token;
+      localStorage.setItem("access_token", accessToken);
 
-    loginContext?.setIsLoggedIn(true);
+      const refreshToken: string = response.data.refresh_token;
+      localStorage.setItem("refresh_token", refreshToken);
 
-    navigate("/diagnose");
+      loginContext?.setIsLoggedIn(true);
+
+      navigate("/diagnose");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message || "An error occurred. Please try again.");
+    }
   };
 
   return (
@@ -83,6 +91,11 @@ export default function LogIn() {
         <Typography component="h1" variant="h5">
           Log In
         </Typography>
+        {error && (
+          <Alert severity="error" sx={{ mt: 2 }}>
+            {error}
+          </Alert>
+        )}
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>

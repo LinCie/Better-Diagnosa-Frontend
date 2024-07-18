@@ -8,10 +8,10 @@ import {
   ListItemText,
   TextField,
   Typography,
+  Alert,
 } from "@mui/material";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import instance from "../lib/instance";
-import QuestionInterface from "../interfaces/question";
 import { Delete, Edit } from "@mui/icons-material";
 
 interface AddQuestionInterface {
@@ -28,6 +28,7 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
     question: "",
     belief: 0,
   });
+  const [error, setError] = useState<string | null>(null);
 
   function handleChangeEvent(event: ChangeEvent<HTMLInputElement>) {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -38,16 +39,22 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
 
     const accessToken = localStorage.getItem("access_token");
 
-    const response = await instance.post(
-      "questions",
-      { question: formData.question, belief: +formData.belief },
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
+    try {
+      const response = await instance.post(
+        "questions",
+        { question: formData.question, belief: +formData.belief },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
 
-    pushQuestion(response.data);
-    setFormData({ question: "", belief: 0 });
+      pushQuestion(response.data);
+      setFormData({ question: "", belief: 0 });
+      setError(null); // Clear the error if the request is successful
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message || "An error occurred. Please try again.");
+    }
   }
 
   return (
@@ -55,6 +62,11 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
       <Typography component="h1" variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
         Tambah Pertanyaan
       </Typography>
+      {error && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+        </Alert>
+      )}
       <Box component="form" noValidate sx={{ mx: 2 }} onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={12}>
@@ -89,6 +101,12 @@ function AddQuestion({ pushQuestion }: AddQuestionInterface) {
       </Box>
     </Box>
   );
+}
+
+interface QuestionInterface {
+  id: string;
+  question: string;
+  belief: number;
 }
 
 interface ShowQuestionInterface {
@@ -134,14 +152,22 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState(question);
+  const [error, setError] = useState<string | null>(null);
 
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
-  const handleSaveClick = () => {
-    onEdit(editedQuestion);
-    setIsEditing(false);
+  const handleSaveClick = async () => {
+    try {
+      onEdit(editedQuestion);
+      setIsEditing(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message || "An error occurred. Please try again.");
+    } finally {
+      setError(null);
+    }
   };
 
   const handleCancelClick = () => {
@@ -149,8 +175,15 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
     setIsEditing(false);
   };
 
-  const handleDeleteClick = () => {
-    onDelete(question.id);
+  const handleDeleteClick = async () => {
+    try {
+      onDelete(question.id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError(error.message || "An error occurred. Please try again.");
+    } finally {
+      setError(null);
+    }
   };
 
   function handleChangeEvent(
@@ -160,62 +193,68 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   }
 
   return (
-    <ListItem>
-      {isEditing ? (
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <TextField
-            value={editedQuestion.question}
-            onChange={handleChangeEvent}
-            variant="outlined"
-            size="small"
-            name="question"
-          />
-          <TextField
-            value={editedQuestion.belief}
-            onChange={handleChangeEvent}
-            variant="outlined"
-            size="small"
-            name="belief"
-            type="number"
-          />
-          <Button
-            onClick={handleSaveClick}
-            variant="contained"
-            color="primary"
-            size="small"
-          >
-            Save
-          </Button>
-          <Button
-            onClick={handleCancelClick}
-            variant="contained"
-            color="secondary"
-            size="small"
-          >
-            Cancel
-          </Button>
-        </Box>
-      ) : (
-        <>
-          <ListItemText
-            primary={question.question}
-            secondary={`Belief: ${question.belief}`}
-          />
-          <IconButton onClick={handleEditClick} edge="end">
-            <Edit />
-          </IconButton>
-          <IconButton onClick={handleDeleteClick} edge="end">
-            <Delete />
-          </IconButton>
-        </>
+    <>
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
       )}
-    </ListItem>
+      <ListItem>
+        {isEditing ? (
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <TextField
+              value={editedQuestion.question}
+              onChange={handleChangeEvent}
+              variant="outlined"
+              size="small"
+              name="question"
+            />
+            <TextField
+              value={editedQuestion.belief}
+              onChange={handleChangeEvent}
+              variant="outlined"
+              size="small"
+              name="belief"
+              type="number"
+            />
+            <Button
+              onClick={handleSaveClick}
+              variant="contained"
+              color="primary"
+              size="small"
+            >
+              Save
+            </Button>
+            <Button
+              onClick={handleCancelClick}
+              variant="contained"
+              color="secondary"
+              size="small"
+            >
+              Cancel
+            </Button>
+          </Box>
+        ) : (
+          <>
+            <ListItemText
+              primary={question.question}
+              secondary={`Belief: ${question.belief}`}
+            />
+            <IconButton onClick={handleEditClick} edge="end">
+              <Edit />
+            </IconButton>
+            <IconButton onClick={handleDeleteClick} edge="end">
+              <Delete />
+            </IconButton>
+          </>
+        )}
+      </ListItem>
+    </>
   );
 };
 
 function Question() {
   const [questionList, setQuestionList] = useState<QuestionInterface[]>([]);
-
   const accessToken = localStorage.getItem("access_token");
 
   function pushQuestion(q: QuestionInterface) {
@@ -229,41 +268,30 @@ function Question() {
       })
       .then((response) => {
         setQuestionList(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching symptoms:", error);
       });
   }, [accessToken]);
 
   const handleEdit = async (question: QuestionInterface) => {
-    try {
-      const response = await instance.patch(
-        `questions/${question.id}`,
-        { question: question.question, belief: +question.belief },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      if (response.status === 200) {
-        setQuestionList(
-          questionList.map((q) => (q.id === question.id ? question : q))
-        );
+    const response = await instance.patch(
+      `questions/${question.id}`,
+      { question: question.question, belief: +question.belief },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
       }
-    } catch (error) {
-      console.error("Failed to edit question:", error);
+    );
+    if (response.status === 200) {
+      setQuestionList(
+        questionList.map((q) => (q.id === question.id ? question : q))
+      );
     }
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const response = await instance.delete(`questions/${id}`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      if (response.status === 200) {
-        setQuestionList(questionList.filter((q) => q.id !== id));
-      }
-    } catch (error) {
-      console.error("Failed to delete question:", error);
+    const response = await instance.delete(`questions/${id}`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (response.status === 200) {
+      setQuestionList(questionList.filter((q) => q.id !== id));
     }
   };
 
