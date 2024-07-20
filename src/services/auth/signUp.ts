@@ -1,4 +1,4 @@
-import { Token } from "../../interfaces/Token";
+import { Token } from "../../interfaces";
 import instance from "../instance";
 
 export async function signUp(username: string, password: string) {

@@ -1,4 +1,4 @@
-import User from "../../interfaces/User";
+import { User } from "../../interfaces";
 import instance from "../instance";
 
 export async function createUser(username: string, password: string) {
