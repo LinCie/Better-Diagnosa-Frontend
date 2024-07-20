@@ -1,10 +1,8 @@
-import History from "./history";
+import { History } from "./History";
 
-interface User {
+export interface User {
   id: string;
   username: string;
   roles: string[];
   histories: History[];
 }
-
-export default User;
