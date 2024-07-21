@@ -1,6 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import HistoryInterface from "../interfaces/history";
-import instance from "../lib/instance";
+import { useContext } from "react";
 import {
   Container,
   Paper,
@@ -14,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { UserContext } from "../rootContext";
+import { History } from "../interfaces";
 
 const StyledContainer = styled(Container)(({ theme }) => ({
   marginTop: theme.spacing(4),
@@ -25,20 +24,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 function HistoryComponent() {
-  const [histories, setHistories] = useState<HistoryInterface[]>([]);
-  const accessToken = localStorage.getItem("access_token");
   const user = useContext(UserContext);
-
-  useEffect(() => {
-    instance
-      .get("histories", { headers: { Authorization: `Bearer ${accessToken}` } })
-      .then((response) => {
-        setHistories(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the histories!", error);
-      });
-  }, [accessToken]);
+  const histories = user?.user?.histories as History[];
 
   // Calculate the counts
   const totalHistories = histories.length;
