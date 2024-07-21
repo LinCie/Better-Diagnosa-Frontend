@@ -1,10 +1,5 @@
-import {
-  ComponentPropsWithoutRef,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { ComponentPropsWithoutRef, useContext, useState } from "react";
+import { useNavigate, Navigate, useLoaderData } from "react-router-dom";
 import {
   Button,
   FormControl,
@@ -17,9 +12,9 @@ import {
   Container,
 } from "@mui/material";
 import { isDengue } from "../lib/logic";
-import instance from "../lib/instance";
 import { LoginContext, UserContext } from "../rootContext";
-import SymptomQuestion from "../interfaces/question";
+import { Question as QuestionInterface } from "../interfaces";
+import { createHistory } from "../services/histories";
 
 interface QuestionProps extends ComponentPropsWithoutRef<"fieldset"> {
   index: number;
@@ -61,27 +56,15 @@ function Question({ children, index, answer, handleAnswer }: QuestionProps) {
 }
 
 function Diagnosa() {
-  const [symptoms, setSymptoms] = useState<SymptomQuestion[]>([]);
-  const [answer, setAnswer] = useState<boolean[]>([]);
+  const symptoms = useLoaderData() as QuestionInterface[];
+
+  const [answer, setAnswer] = useState<boolean[]>(
+    new Array(symptoms.length).fill(false)
+  );
 
   const loginContext = useContext(LoginContext);
   const userContext = useContext(UserContext);
-  const accessToken = localStorage.getItem("access_token");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    instance
-      .get("/questions", {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
-      .then((response) => {
-        setSymptoms(response.data);
-        setAnswer(new Array(response.data.length).fill(false));
-      })
-      .catch((error) => {
-        console.error("Error fetching symptoms:", error);
-      });
-  }, [accessToken]);
 
   function handleAnswer(index: number, isYes: boolean) {
     const newAnswer = [...answer];
@@ -91,13 +74,7 @@ function Diagnosa() {
 
   async function handleDiagnose() {
     const result = isDengue(answer, symptoms);
-    await instance.post(
-      "histories",
-      { isDengue: result },
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      }
-    );
+    await createHistory(result);
     navigate("/result", { state: { result } });
   }
 
