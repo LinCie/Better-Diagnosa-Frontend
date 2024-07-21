@@ -1,7 +1,15 @@
 import { refresh } from "../services/auth";
 
 export async function accessTokenLoader() {
-  const accessToken = await refresh();
-  localStorage.setItem("access_token", accessToken);
-  return;
+  try {
+    const accessToken = await refresh();
+    if (accessToken) {
+      localStorage.setItem("access_token", accessToken);
+    }
+    return;
+  } catch (error) {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    throw error;
+  }
 }
