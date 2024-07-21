@@ -15,7 +15,7 @@ import History from "./pages/History";
 import DiagnoseResult from "./pages/DiagnoseResult";
 import AllUsers from "./pages/AllUsers";
 import DengueInfo from "./pages/DengueInfo";
-import { accessTokenLoader, userLoader } from "./loaders";
+import { accessTokenLoader, questionLoader, userLoader } from "./loaders";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,7 +31,13 @@ const router = createBrowserRouter(
         <Route path="/" element={<Index />} index />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<LogIn />} />
-        <Route path="/diagnose" element={<Diagnose />} />
+        <Route
+          path="/diagnose"
+          element={<Diagnose />}
+          loader={async () => {
+            return await questionLoader();
+          }}
+        />
         <Route path="/result" element={<DiagnoseResult />} />
         <Route path="/history" element={<History />} />
         <Route path="/info" element={<DengueInfo />} />
