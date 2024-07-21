@@ -8,10 +8,10 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import instance from "../lib/instance";
 import { LoginContext, UserContext } from "../rootContext";
 import { useNavigate } from "react-router-dom";
 import Alert from "@mui/material/Alert";
+import { signUp } from "../services/auth";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
@@ -44,19 +44,16 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
 
     try {
-      const response = await instance.post("auth/signup", {
-        username: data.get("username"),
-        password: data.get("password"),
-      });
+      const response = await signUp(
+        data.get("username") as string,
+        data.get("password") as string
+      );
 
-      userContext?.setUser(response.data.user);
+      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("refresh_token", response.refresh_token);
+      localStorage.setItem("user_id", response.user.id);
 
-      const accessToken: string = response.data.access_token;
-      localStorage.setItem("access_token", accessToken);
-
-      const refreshToken: string = response.data.refresh_token;
-      localStorage.setItem("refresh_token", refreshToken);
-
+      userContext?.setUser(response.user);
       loginContext?.setIsLoggedIn(true);
 
       navigate("/diagnose");
