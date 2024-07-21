@@ -1,6 +1,7 @@
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  redirect,
   Route,
 } from "react-router-dom";
 import Root from "./Root";
@@ -40,7 +41,11 @@ const router = createBrowserRouter(
         element={<RootAdmin />}
         loader={async () => {
           await accessTokenLoader();
-          return await userLoader();
+          const user = await userLoader();
+          if (user?.roles.includes("ADMIN")) {
+            return user;
+          }
+          return redirect("/");
         }}
       >
         <Route element={<Question />} index />

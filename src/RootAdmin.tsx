@@ -14,13 +14,12 @@ import {
   Typography,
   Divider,
 } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { LoginContext, UserContext } from "./rootContext";
-import axios from "axios";
-import UserData from "./interfaces/userdata";
 import { useCookies } from "react-cookie";
+import { User } from "./interfaces";
 
 function Header() {
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -294,55 +293,10 @@ function Header() {
 }
 
 function RootAdmin() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<UserData | undefined>(undefined);
+  const loader = useLoaderData() as User | null;
 
-  const [cookies] = useCookies();
-
-  const navigate = useNavigate();
-
-  async function getAccessToken() {
-    const refreshToken = localStorage.getItem("refresh_token");
-
-    if (!refreshToken) {
-      navigate("/");
-    }
-
-    try {
-      const response = await axios.post(
-        "/api/v1/auth/refresh",
-        {},
-        { headers: { Authorization: `Bearer ${refreshToken}` } }
-      );
-
-      const accessToken: string = response.data.access_token;
-      localStorage.setItem("access_token", accessToken);
-
-      const user = cookies.user;
-
-      if (!user.roles.includes("ADMIN")) {
-        navigate("/");
-      }
-
-      setUser(user);
-      setIsLoggedIn(true);
-    } catch (error) {
-      localStorage.removeItem("refresh_token");
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    getAccessToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (isLoading) {
-    return <></>;
-  }
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(loader !== null);
+  const [user, setUser] = useState<User | null>(loader);
 
   return (
     <>
